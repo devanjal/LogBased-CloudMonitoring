@@ -9,6 +9,12 @@ var express = require('express')
   , path = require('path')
   , helloworld = require('./routes/helloworld')
 
+var elasticsearch = require('elasticsearch');
+var client = new elasticsearch.Client({
+  host: '130.65.159.143:9200',
+  log: 'trace'
+});
+
 var app = express();
 
 // all environments
@@ -32,6 +38,32 @@ app.use(express.bodyParser());
 
 //app.use(express.methodOverride());
 
+var msg =client.search({
+  index: 'stock',
+  id:'AV4had8f9rCScptkdesE',
+  body: {
+    query: {
+      match: {
+        body: ''
+      }
+    }
+  }
+}).then(function (resp) {
+  var hits = resp.hits.hits;
+}, function (err) {
+  console.trace(err.message);
+});
+console.log("Here it is "+msg)
+
+// var msg= client.search({
+//   q:'*'
+// }).then(function (body) {
+//   var hits = body.hits.hits;
+// }, function (error) {
+//  // console.trace(error.message);
+// });
+
+//console.log("Here it is"+msg);
 //sets router folder
 app.use(app.router);
 
